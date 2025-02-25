@@ -12,4 +12,10 @@ export default defineConfig({
       "@calculator": path.resolve(__dirname, "../calculator/pkg"),
     },
   },
+  server: {
+    fs: {
+      // Allow serving files from one level up to the project root
+      allow: [".."],
+    },
+  },
 });
