@@ -12,7 +12,7 @@ const App: React.FC = () => {
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-4 py-5">
           <h1 className="text-xl font-medium text-gray-800">
-            React + Rust/WASM + Shader Generator
+            Calculator and Text to Shader Application
           </h1>
         </div>
       </header>

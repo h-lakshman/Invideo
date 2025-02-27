@@ -457,7 +457,36 @@ const ShaderGenerator: React.FC<ShaderGeneratorProps> = ({ active }) => {
               Shader Code
             </h3>
             <pre className="p-3 bg-gray-50 border border-gray-200 rounded-md text-xs overflow-auto whitespace-pre-wrap max-h-80 font-mono">
-              {shaderResponse.rawOutput || "No shader code generated"}
+              {shaderResponse.data ? (
+                <>
+                  {shaderResponse.data.vertexShader && (
+                    <>
+                      <div className="font-semibold mb-2">Vertex Shader:</div>
+                      {shaderResponse.data.vertexShader}
+                    </>
+                  )}
+
+                  {shaderResponse.data.fragmentShader && (
+                    <>
+                      <div className="font-semibold mt-4 mb-2">
+                        Fragment Shader:
+                      </div>
+                      {shaderResponse.data.fragmentShader}
+                    </>
+                  )}
+
+                  {shaderResponse.data.combinedShader &&
+                    !shaderResponse.data.vertexShader &&
+                    !shaderResponse.data.fragmentShader && (
+                      <>
+                        <div className="font-semibold mb-2">Shader Code:</div>
+                        {shaderResponse.data.combinedShader}
+                      </>
+                    )}
+                </>
+              ) : (
+                "No shader code generated"
+              )}
             </pre>
           </div>
         </div>
