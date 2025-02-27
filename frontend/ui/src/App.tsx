@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import RustCalculator from "./Components/TabOne";
+import ShaderGenerator from "./Components/ShaderGenerator";
+
 const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"calculator" | "other">(
+  const [activeTab, setActiveTab] = useState<"calculator" | "shader">(
     "calculator"
   );
 
@@ -9,7 +11,7 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold mb-6 text-center">
-          React + Rust/WASM + Elixir App
+          React + Rust/WASM + AI Shader Generator
         </h1>
 
         {/* Tabs */}
@@ -27,14 +29,14 @@ const App: React.FC = () => {
                 Rust Calculator
               </button>
               <button
-                onClick={() => setActiveTab("other")}
+                onClick={() => setActiveTab("shader")}
                 className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
-                  activeTab === "other"
+                  activeTab === "shader"
                     ? "border-blue-500 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 }`}
               >
-                Tab 2
+                AI Shader Generator
               </button>
             </nav>
           </div>
@@ -43,12 +45,7 @@ const App: React.FC = () => {
         {/* Tab content */}
         <div className="bg-white shadow rounded-lg p-6">
           <RustCalculator active={activeTab === "calculator"} />
-          {activeTab === "other" && (
-            <div>
-              <h2 className="text-xl font-bold mb-4">Tab 2 Content</h2>
-              <p>This would be your second tab content.</p>
-            </div>
-          )}
+          <ShaderGenerator active={activeTab === "shader"} />
         </div>
       </div>
     </div>

@@ -1,50 +1,48 @@
-# React + TypeScript + Vite
+# AI Shader Generator Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a React frontend for generating GLSL shaders using AI. It connects to an Express backend that uses the Gemini API to generate shader code based on text prompts.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React-based UI with TypeScript
+- WebGL2 shader rendering with support for:
+  - 2D fragment shaders
+  - 3D shaders with rotating cubes
+  - Animation via time uniforms
+- Integration with AI-powered shader generation API
+- Real-time shader preview
+- Raw shader code display
+- Error handling for invalid shader code
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+1. Make sure the backend server is running (see the server README)
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Start the development server:
+   ```
+   npm run dev
+   ```
 
-- Configure the top-level `parserOptions` property like this:
+## Usage
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+1. Navigate to the "AI Shader Generator" tab
+2. Enter a description of the shader you want to generate (e.g., "A rotating cube with effects")
+3. Click "Generate Shader"
+4. The generated shader will be displayed in the preview canvas
+5. The raw shader code will be shown below the preview
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Requirements
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+- Modern browser with WebGL2 support
+- Backend server running on http://localhost:3000
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Technologies Used
+
+- React
+- TypeScript
+- WebGL2
+- gl-matrix for 3D matrix operations
+- Tailwind CSS
