@@ -40,16 +40,40 @@ const ShaderGenerator: React.FC<ShaderGeneratorProps> = ({ active }) => {
   useEffect(() => {
     if (!active || !shaderResponse?.success || !canvasRef.current) return;
 
+    // Clean up previous WebGL context and resources
+    const cleanup = () => {
+      if (glRef.current && programRef.current) {
+        const gl = glRef.current;
+        gl.useProgram(null);
+        gl.deleteProgram(programRef.current);
+
+        // Delete vertex array objects and buffers
+        const vao = gl.getParameter(gl.VERTEX_ARRAY_BINDING);
+        if (vao) gl.deleteVertexArray(vao);
+
+        // Reset context
+        glRef.current = null;
+        programRef.current = null;
+      }
+      if (animationRef.current !== null) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+    };
+
+    cleanup(); // Clean up before setting up new context
+
     const setupWebGL = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      // Clean previos animation
-      if (animationRef.current !== null) {
-        cancelAnimationFrame(animationRef.current);
-      }
+      console.log("Setting up WebGL context...");
 
-      const gl = canvas.getContext("webgl2") as WebGL2RenderingContext;
+      const gl = canvas.getContext("webgl2", {
+        preserveDrawingBuffer: true,
+        alpha: true,
+      }) as WebGL2RenderingContext;
+
       if (!gl) {
         setError("WebGL2 is not supported in your browser");
         return;
@@ -308,12 +332,18 @@ const ShaderGenerator: React.FC<ShaderGeneratorProps> = ({ active }) => {
     };
 
     const render = () => {
-      if (!glRef.current || !programRef.current) return;
+      if (!glRef.current || !programRef.current) {
+        console.log("Render skipped - missing GL context or program");
+        return;
+      }
 
       const gl = glRef.current;
       const program = programRef.current;
 
-      gl.clearColor(0, 0, 0, 0);
+      console.log("Rendering frame...");
+
+      // Clear with a dark background to make it obvious if rendering is happening
+      gl.clearColor(0.1, 0.1, 0.1, 1.0);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
       // Use the program
@@ -351,6 +381,8 @@ const ShaderGenerator: React.FC<ShaderGeneratorProps> = ({ active }) => {
         mat4.lookAt(viewMatrix, [0, 0, 3], [0, 0, 0], [0, 1, 0]);
 
         const modelMatrix = mat4.create();
+        const timeInSeconds = (Date.now() - startTimeRef.current) / 1000;
+        mat4.rotateY(modelMatrix, modelMatrix, timeInSeconds);
 
         const mvpMatrix = mat4.create();
         mat4.multiply(mvpMatrix, viewMatrix, modelMatrix);
@@ -366,7 +398,17 @@ const ShaderGenerator: React.FC<ShaderGeneratorProps> = ({ active }) => {
       animationRef.current = requestAnimationFrame(render);
     };
 
-    setupWebGL();
+    // Start the setup and render process
+    try {
+      setupWebGL();
+    } catch (err) {
+      console.error("Error during WebGL setup:", err);
+      setError(err instanceof Error ? err.message : "WebGL setup failed");
+      cleanup();
+    }
+
+    // Cleanup on unmount or when dependencies change
+    return cleanup;
   }, [active, shaderResponse]);
 
   const generateShader = async () => {
@@ -380,16 +422,17 @@ const ShaderGenerator: React.FC<ShaderGeneratorProps> = ({ active }) => {
     setShaderResponse(null);
 
     try {
-      const response = await fetch(
-        "http://ec2-51-21-221-146.eu-north-1.compute.amazonaws.com:443/api/shader",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ prompt }),
-        }
-      );
+      const healthCheck = await fetch("http://localhost:3000/");
+      if (!healthCheck.ok) {
+        throw new Error("Server is not responding");
+      }
+      const response = await fetch("http://localhost:3000/api/shader", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt }),
+      });
 
       const data = await response.json();
       setShaderResponse(data);
