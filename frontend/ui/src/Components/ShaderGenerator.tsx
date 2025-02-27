@@ -380,13 +380,16 @@ const ShaderGenerator: React.FC<ShaderGeneratorProps> = ({ active }) => {
     setShaderResponse(null);
 
     try {
-      const response = await fetch("http://localhost:3000/api/shader", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt }),
-      });
+      const response = await fetch(
+        "http://ec2-51-21-221-146.eu-north-1.compute.amazonaws.com:443/api/shader",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ prompt }),
+        }
+      );
 
       const data = await response.json();
       setShaderResponse(data);
