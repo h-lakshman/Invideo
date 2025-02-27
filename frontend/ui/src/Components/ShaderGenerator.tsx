@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { mat4 } from "gl-matrix"; 
+import { mat4 } from "gl-matrix";
 
 interface ShaderGeneratorProps {
   active: boolean;
@@ -407,56 +407,56 @@ const ShaderGenerator: React.FC<ShaderGeneratorProps> = ({ active }) => {
   if (!active) return null;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white rounded-xl shadow-md">
-      <h2 className="text-xl font-bold mb-4">AI Shader Generator</h2>
+    <div className="max-w-3xl mx-auto px-5 py-6">
+      <h2 className="text-2xl font-medium mb-6 text-gray-800">
+        Shader Generator
+      </h2>
 
-      <div className="mb-4">
-        <label
-          htmlFor="prompt"
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
-          Describe the kind of WebGL shader you want:
+      <div className="mb-5">
+        <label htmlFor="prompt" className="block mb-2 text-sm text-gray-600">
+          Describe your shader:
         </label>
-        <input
-          id="prompt"
-          type="text"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="e.g., A rotating cube with a gradient background"
-          className="w-full p-2 border border-gray-300 rounded-md"
-        />
+        <div className="flex gap-3">
+          <input
+            id="prompt"
+            type="text"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="e.g., flowing liquid with ripples"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+          />
+          <button
+            onClick={generateShader}
+            disabled={loading || !prompt.trim()}
+            className={`px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none disabled:bg-gray-400 disabled:cursor-not-allowed ${
+              loading ? "opacity-80" : ""
+            }`}
+          >
+            {loading ? "Working..." : "Generate"}
+          </button>
+        </div>
       </div>
 
-      <button
-        onClick={generateShader}
-        disabled={loading || !prompt.trim()}
-        className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 disabled:bg-gray-400"
-      >
-        {loading ? "Generating..." : "Generate Shader"}
-      </button>
-
       {error && (
-        <div className="mt-4 p-2 bg-red-100 text-red-800 rounded-md">
+        <div className="mb-5 px-4 py-3 bg-red-50 text-red-700 text-sm rounded-md">
           {error}
         </div>
       )}
 
       {shaderResponse && (
         <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-2">Generated Shader</h3>
-
-          {/* Canvas to display the shader */}
-          <div className="mb-4">
+          <div className="mb-5">
             <canvas
               ref={canvasRef}
-              className="w-full h-64 border border-gray-300 rounded-md bg-black"
+              className="w-full h-72 bg-black rounded-md border border-gray-200"
             />
           </div>
 
-          {/* Raw shader code display */}
-          <div className="mt-4">
-            <h4 className="font-medium mb-1">Raw Shader Code:</h4>
-            <pre className="bg-gray-100 p-3 rounded-md overflow-auto max-h-64 text-xs">
+          <div>
+            <h3 className="text-base font-medium mb-2 text-gray-700">
+              Shader Code
+            </h3>
+            <pre className="p-3 bg-gray-50 border border-gray-200 rounded-md text-xs overflow-auto whitespace-pre-wrap max-h-80 font-mono">
               {shaderResponse.rawOutput || "No shader code generated"}
             </pre>
           </div>
