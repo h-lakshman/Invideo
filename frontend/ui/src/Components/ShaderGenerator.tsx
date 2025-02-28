@@ -422,11 +422,11 @@ const ShaderGenerator: React.FC<ShaderGeneratorProps> = ({ active }) => {
     setShaderResponse(null);
 
     try {
-      const healthCheck = await fetch("https://51.21.221.146/");
+      const healthCheck = await fetch("http://51.21.221.146:443/");
       if (!healthCheck.ok) {
         throw new Error("Server is not responding");
       }
-      const response = await fetch("https://51.21.221.146/api/shader", {
+      const response = await fetch("http://51.21.221.146:443/api/shader", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
