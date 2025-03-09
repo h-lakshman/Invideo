@@ -3,7 +3,7 @@ defmodule ElixirBackendWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug CORSPlug, origin: ["http://localhost:5173"], methods: ["GET", "POST", "OPTIONS"]
+    plug CORSPlug, origin: ["http://localhost:5173", "http://51.21.221.146"], methods: ["GET", "POST", "OPTIONS"]
   end
 
   scope "/api", ElixirBackendWeb do
