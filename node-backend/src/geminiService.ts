@@ -61,14 +61,66 @@ export const generateShader = async (
 }> => {
   try {
     const enhancedPrompt = `
-      Generate a GLSL shader based on the following description: "${prompt}".
-      
-      Please provide either:
-      1. Both a vertex shader and a fragment shader, or
-      2. A single combined GLSL shader snippet
-      
-      Format your response with code blocks using the \`\`\`vertex, \`\`\`fragment, or \`\`\`glsl syntax.
-      The shader should be simple but visually interesting, and must be valid GLSL that can compile and run in a WebGL context.
+    Generate a GLSL shader based on the following description: "${prompt}".
+    
+    Your task is to create a visually impressive and animated GLSL shader that works properly in WebGL 2.0.
+    
+    ATTENTION: The shader MUST follow this EXACT specification to work in the frontend:
+    
+    1. The vertex shader must accept vertices already in clip space (-1 to 1 range).
+    2. The shader must use WebGL 2.0 syntax with "#version 300 es" at the top.
+    3. The fragment shader must use "out vec4 fragColor;" for output.
+    4. Animation must use the u_time uniform for movement.
+    
+    Use EXACTLY these variable names:
+    - in vec4 a_position; // Already in clip space (-1 to 1)
+    - uniform float u_time; // Time in seconds
+    - uniform vec2 u_resolution; // Canvas width and height
+    - out vec4 fragColor; // Fragment shader output
+    
+    CRITICAL: The vertex shader should NOT transform the positions by dividing by resolution.
+    The a_position values are ALREADY in clip space (-1 to 1).
+    
+    Example vertex shader:
+    \`\`\`vertex
+    #version 300 es
+    in vec4 a_position;
+    out vec2 v_texCoord;
+    
+    void main() {
+      v_texCoord = a_position.xy * 0.5 + 0.5; // Convert from clip space to texture coordinates
+      gl_Position = a_position; // Position is already in clip space
+    }
+    \`\`\`
+    
+    Example fragment shader:
+    \`\`\`fragment
+    #version 300 es
+    precision highp float;
+    
+    in vec2 v_texCoord;
+    uniform float u_time;
+    uniform vec2 u_resolution;
+    out vec4 fragColor;
+    
+    void main() {
+      vec3 color = vec3(0.5) + 0.5 * cos(u_time + v_texCoord.xyx + vec3(0, 2, 4));
+      fragColor = vec4(color, 1.0);
+    }
+    \`\`\`
+    
+    Please provide BOTH a vertex shader and a fragment shader in this exact format.
+    
+    Format your response with code blocks using:
+    \`\`\`vertex
+    #version 300 es
+    // Vertex shader code here
+    \`\`\`
+    
+    \`\`\`fragment
+    #version 300 es
+    // Fragment shader code here  
+    \`\`\`
     `;
 
     const response = await axios.post(
