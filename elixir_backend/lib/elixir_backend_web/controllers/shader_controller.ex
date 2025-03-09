@@ -9,7 +9,7 @@ defmodule ElixirBackendWeb.ShaderController do
 
   def options(conn, _params) do
     conn
-    |> put_resp_header("access-control-allow-origin", "http://localhost:5173")
+    |> put_resp_header("access-control-allow-origin", "*")
     |> put_resp_header("access-control-allow-methods", "POST, OPTIONS")
     |> put_resp_header("access-control-allow-headers", "content-type")
     |> send_resp(204, "")
@@ -19,7 +19,7 @@ defmodule ElixirBackendWeb.ShaderController do
     case GeminiService.generate_shader(prompt) do
       {:ok, shader_code} ->
         conn
-        |> put_resp_header("access-control-allow-origin", "http://localhost:5173")
+        |> put_resp_header("access-control-allow-origin", "*")
         |> json(%{
           success: true,
           data: shader_code
@@ -28,7 +28,7 @@ defmodule ElixirBackendWeb.ShaderController do
       {:error, error} ->
         conn
         |> put_status(:internal_server_error)
-        |> put_resp_header("access-control-allow-origin", "http://localhost:5173")
+        |> put_resp_header("access-control-allow-origin", "*")
         |> json(%{
           success: false,
           error: error
@@ -39,7 +39,7 @@ defmodule ElixirBackendWeb.ShaderController do
   def generate_shader(conn, _params) do
     conn
     |> put_status(:bad_request)
-    |> put_resp_header("access-control-allow-origin", "http://localhost:5173")
+    |> put_resp_header("access-control-allow-origin", "*")
     |> json(%{
       success: false,
       error: "Prompt is required"
